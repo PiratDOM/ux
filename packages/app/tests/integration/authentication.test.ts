@@ -71,7 +71,7 @@ describe.each(environments)('auth scenarios - %s %s', (browserType, deviceType) 
     });
   }, 10000);
 
-  afterEach(async () => {
+  afterAll(async () => {
     try {
       await browser.close();
     } catch (error) {
@@ -83,7 +83,7 @@ describe.each(environments)('auth scenarios - %s %s', (browserType, deviceType) 
     await demoPage.screenshot('home-page');
     await demoPage.openConnect();
     await demoPage.clickConnectGetStarted();
-    const auth = await AuthPage.getAuthPage(browser);
+    const auth = await AuthPage.getAuthPage(context);
     const authPage = auth.page;
 
     await authPage.waitForSelector(auth.$textareaReadOnlySeedPhrase);
@@ -118,7 +118,7 @@ describe.each(environments)('auth scenarios - %s %s', (browserType, deviceType) 
   it('creating a successful local account', async () => {
     await demoPage.openConnect();
     await demoPage.clickConnectGetStarted();
-    const authPage = await AuthPage.getAuthPage(browser);
+    const authPage = await AuthPage.getAuthPage(context);
     const secretKey = await authPage.saveSecretPhrase();
     expect(secretKey.split(' ').length).toEqual(SEED_PHRASE_LENGTH);
     expect(validateMnemonic(secretKey)).toBeTruthy();
@@ -134,7 +134,7 @@ describe.each(environments)('auth scenarios - %s %s', (browserType, deviceType) 
     await demoPage.goToPage();
     await demoPage.openConnect();
     await demoPage.clickConnectGetStarted();
-    const authPage = await AuthPage.getAuthPage(browser);
+    const authPage = await AuthPage.getAuthPage(context);
     await authPage.saveSecretPhrase();
     await authPage.clickIHaveSavedIt();
     await authPage.page.waitForSelector(authPage.$inputUsername);
@@ -210,7 +210,7 @@ describe.each(environments)('auth scenarios - %s %s', (browserType, deviceType) 
     //TEST #10,11
     await demoPage.openConnect();
     await demoPage.clickAlreadyHaveSecretKey();
-    const authPage = await AuthPage.getAuthPage(browser, false);
+    const authPage = await AuthPage.getAuthPage(context, false);
     await authPage.loginWithPreviousSecretKey(SECRET_KEY);
     await authPage.chooseAccount(USERNAME);
     await authPage.screenshot('existing-key.png');
@@ -222,7 +222,7 @@ describe.each(environments)('auth scenarios - %s %s', (browserType, deviceType) 
     //TEST #12
     await demoPage.openConnect();
     await demoPage.clickAlreadyHaveSecretKey();
-    const authPage = await AuthPage.getAuthPage(browser, false);
+    const authPage = await AuthPage.getAuthPage(context, false);
     await authPage.loginWithPreviousSecretKey(WRONG_SECRET_KEY);
     const element = await authPage.page.waitForSelector(authPage.$signInKeyError);
     expect(element).toBeTruthy();
@@ -233,7 +233,7 @@ describe.each(environments)('auth scenarios - %s %s', (browserType, deviceType) 
     //TEST #13
     await demoPage.openConnect();
     await demoPage.clickAlreadyHaveSecretKey();
-    const authPage = await AuthPage.getAuthPage(browser, false);
+    const authPage = await AuthPage.getAuthPage(context, false);
     await authPage.loginWithPreviousSecretKey(WRONG_MAGIC_RECOVERY_KEY);
     await authPage.setPassword(WRONG_PASSWORD);
     const element = await authPage.page.waitForSelector(authPage.incorrectPassword);
@@ -244,7 +244,7 @@ describe.each(environments)('auth scenarios - %s %s', (browserType, deviceType) 
     //TEST #13
     await demoPage.openConnect();
     await demoPage.clickAlreadyHaveSecretKey();
-    const authPage = await AuthPage.getAuthPage(browser, false);
+    const authPage = await AuthPage.getAuthPage(context, false);
     await authPage.loginWithPreviousSecretKey(WRONG_MAGIC_RECOVERY_KEY);
     await authPage.setPassword(CORRECT_PASSWORD);
     await authPage.chooseAccount('thisisit202020');
@@ -255,7 +255,7 @@ describe.each(environments)('auth scenarios - %s %s', (browserType, deviceType) 
   it('generates the correct app private key', async () => {
     await demoPage.openConnect();
     await demoPage.clickAlreadyHaveSecretKey();
-    const auth = await AuthPage.getAuthPage(browser, false);
+    const auth = await AuthPage.getAuthPage(context, false);
     const authPage = auth.page;
 
     const seed = generateMnemonic();

@@ -1,5 +1,5 @@
-import { Page } from 'playwright-core';
-import { createTestSelector, wait, Browser } from '../utils';
+import { Page, BrowserContext } from 'playwright-core';
+import { createTestSelector, wait } from '../utils';
 
 export class AuthPage {
   static url = 'http://localhost:8080';
@@ -33,8 +33,8 @@ export class AuthPage {
     this.page = page;
   }
 
-  static async getAuthPage(browser: Browser, signUp = true) {
-    const page = await this.recursiveGetAuthPage(browser);
+  static async getAuthPage(context: BrowserContext, signUp = true) {
+    const page = await this.recursiveGetAuthPage(context);
     if (!page) {
       throw new Error('Unable to get auth page popup');
     }
@@ -49,15 +49,15 @@ export class AuthPage {
   /**
    * Due to flakiness of getting the pop-up page, this has some 'retry' logic
    */
-  static async recursiveGetAuthPage(browser: Browser, attempt = 1): Promise<Page> {
-    const pages = browser.contexts()[0].pages();
+  static async recursiveGetAuthPage(context: BrowserContext, attempt = 1): Promise<Page> {
+    const pages = context.pages();
     const page = pages.find(p => p.url().includes('localhost:8080'));
     if (!page) {
       if (attempt > 3) {
         throw new Error('Unable to get auth page popup');
       }
       await wait(50);
-      return this.recursiveGetAuthPage(browser, attempt + 1);
+      return this.recursiveGetAuthPage(context, attempt + 1);
     }
     return page;
   }

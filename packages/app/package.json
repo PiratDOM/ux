@@ -19,7 +19,7 @@
     "test": "jest --verbose=true",
     "test:coverage": "jest --collect-coverage",
     "test:watch": "jest --watch",
-    "test:ci": "jest --verbose=true --ci --reporters=default --reporters=jest-junit --collect-coverage",
+    "test:ci": "jest --verbose=true",
     "test:unit": "jest --testPathIgnorePatterns=./tests/integration/*",
     "typecheck": "tsc --noEmit"
   },
