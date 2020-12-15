@@ -36,13 +36,14 @@ if (process.env.CI) {
   // environments.push([firefox, undefined]);
 }
 
-jest.retryTimes(process.env.CI ? 2 : 1);
+jest.retryTimes(process.env.CI ? 1 : 0);
 describe.each(environments)('auth scenarios - %s %s', (browserType, deviceType) => {
   let browser: Browser;
   let context: BrowserContext;
   let demoPage: DemoPage;
   let consoleLogs: any[];
-  beforeEach(async () => {
+
+  beforeAll(async () => {
     const launchArgs: string[] = [];
     if (browserType.name() === 'chromium') {
       launchArgs.push('--no-sandbox');
@@ -51,6 +52,10 @@ describe.each(environments)('auth scenarios - %s %s', (browserType, deviceType) 
       args: launchArgs,
     });
     console.log('[DEBUG]: Launched puppeteer browser');
+  });
+
+  beforeEach(async () => {
+    console.log('[DEBUG]: Starting new browser context.');
     if (deviceType) {
       context = await browser.newContext({
         viewport: deviceType.viewport,
